@@ -1,0 +1,6 @@
+.DS_Store
+play.yml
+host.yml
+host*.yml
+inventory.yml
+.vscode

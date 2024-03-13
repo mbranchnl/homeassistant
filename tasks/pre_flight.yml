@@ -1,0 +1,29 @@
+---
+- name: End the play for not compatible hosts
+  ansible.builtin.meta: end_play
+  when:
+  - ansible_os_family not in 'Debian' and
+    ansible_distribution_major_version | int <= 9
+  - ansible_os_family not in 'RedHat' and
+    ansible_distribution_major_version | int <= 7
+  - ansible_os_family not in 'Windows' and
+    ansible_distribution_major_version | int <= 2016
+
+## On Linux servers for MOTD
+- name: Add notification for Ansible Managed Environment
+  ansible.builtin.blockinfile:
+    path: /etc/motd
+    block: |
+      ###
+      ### This server is managed through ansible with the following roles:
+      ###
+    marker: "### {mark} NOTIFY ANSIBLE MANAGED ENVIRONMENT"
+  changed_when: false
+
+- name: Add notification for Ansible Managed Environment
+  ansible.builtin.lineinfile:
+    path: /etc/motd
+    regexp: '^### homeassistant'
+    line: '### homeassistant'
+    insertbefore: '###'
+  changed_when: false
