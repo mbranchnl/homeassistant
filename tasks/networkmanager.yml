@@ -36,3 +36,10 @@
     state: present
     autoconnect: true
     type: ethernet
+
+- name: Configure DNS through systemd-resolved
+  ansible.builtin.lineinfile:
+    path: /etc/systemd/resolved.conf
+    regexp: '^#DNS='
+    line: 'DNS={{ ansible_facts.dns.nameservers[0] }}'
+  notify: Restart systemd-resolved
