@@ -1,0 +1,38 @@
+---
+- name: Install network-manager package
+  ansible.builtin.apt:
+    pkg:
+      - network-manager
+
+- name: Check if system is already managed by NetworkManager
+  ansible.builtin.shell: "nmcli device status | grep {{ ansible_facts.default_ipv4.interface }}"
+  register: hass_nm_status
+  changed_when: false
+
+- name: "Remove current configuration from /etc/network/interfaces.d/{{ ansible_facts.default_ipv4.interface }}"
+  ansible.builtin.file:
+    path: "/etc/network/interfaces.d/{{ ansible_facts.default_ipv4.interface }}"
+    state: absent
+  when: "'unmanaged' in hass_nm_status.stdout"
+
+- name: Restart NetworkManager service
+  service:
+    name: NetworkManager
+    state: restarted
+  when: "'unmanaged' in hass_nm_status.stdout"
+
+- name: Activate when not yet managed by NetworkManager
+  ansible.builtin.shell: "nmcli device set {{ ansible_facts.default_ipv4.interface }} managed yes"
+  when: "'unmanaged' in hass_nm_status.stdout"
+
+- name: Configure network through NetworkManager based on the gathered network configuration
+  ansible.builtin.nmcli:
+    conn_name: '{{ ansible_facts.default_ipv4.interface }}'
+    ifname: '{{ ansible_facts.default_ipv4.interface }}'
+    ip4: '{{ ansible_facts.default_ipv4.address }}/24'
+    gw4: '{{ ansible_facts.default_ipv4.gateway }}'
+    dns4:
+      - '{{ ansible_facts.dns.nameservers[0] }}'
+    state: present
+    autoconnect: true
+    type: ethernet
