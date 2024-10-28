@@ -30,9 +30,9 @@
       - ca-certificates
 
 - name: Add Docker GPG apt Key
-  ansible.builtin.apt_key:
+  ansible.builtin.get_url:
     url: https://download.docker.com/linux/debian/gpg
-    state: present
+    dest: /etc/apt/keyrings/docker.asc
 
 - name: Create Docker repository file
   ansible.builtin.copy:
