@@ -5,6 +5,8 @@
       - htop
       - iotop
       - strace
+      - ncdu
+      - net-tools
 
 - name: Install required packages
   ansible.builtin.apt:
@@ -33,6 +35,7 @@
   ansible.builtin.get_url:
     url: https://download.docker.com/linux/debian/gpg
     dest: /etc/apt/keyrings/docker.asc
+    mode: 0644
 
 - name: Create Docker repository file
   ansible.builtin.copy:
