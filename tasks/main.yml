@@ -7,3 +7,6 @@
 
 - name: Install agent
   ansible.builtin.include_tasks: agent.yml
+
+- name: Post-install tasks
+  ansible.builtin.include_tasks: post_install.yml

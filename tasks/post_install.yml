@@ -1,0 +1,16 @@
+---
+- name: Check if service is unhealthy
+  ansible.builtin.uri:
+    url: http://127.0.0.1:4357
+    return_content: true
+  register: health_check
+  notify: Reboot system
+
+- name: Reboot system
+  ansible.builtin.reboot:
+    msg: "Reboot initiated by Ansible"
+    reboot_timeout: 600
+    pre_reboot_delay: 0
+    post_reboot_delay: 10
+    test_command: uptime
+  when: "'Unhealthy' in health_check.content"
