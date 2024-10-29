@@ -6,6 +6,8 @@ Why this role? First of all it's fun to build, and i wanted more controle over t
 
 This README.md will contain all manual steps, and other need to knows during the build of this role. This role also includes some personal preferences of the author and has some initials steps that are already done as described in the prerequisites
 
+The default Home Assistant files you can find in: `/usr/share/hassio`
+
 ## Prerequisites
 
 Packages needed to be installated on the server in order to execute this role are;
