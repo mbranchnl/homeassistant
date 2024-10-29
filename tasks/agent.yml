@@ -1,0 +1,24 @@
+---
+- name: Get latest Home Assistant OS Agent release
+  ansible.builtin.uri:
+    url: https://api.github.com/repos/home-assistant/os-agent/releases/latest
+    headers:
+      Accept: application/vnd.github+json
+      X-GitHub-Api-Version: 2022-11-28
+    return_content: true
+  register: hass_agent_release
+
+- name: Get url of latest Home Assistant OS Agent release
+  ansible.builtin.shell:
+    cmd: "jq -r '.assets[] | select(.name | endswith(\"linux_x86_64.deb\")) | .browser_download_url'"
+    stdin: "{{ hass_agent_release.json | to_json }}"
+  changed_when: false
+  register: hass_agent_release_url
+
+- name: Install latest Home Assistant OS Agent
+  ansible.builtin.apt:
+    deb: "{{ hass_agent_release_url.stdout }}"
+
+- name: Install the Home Assistant Supervised Debian Package
+  ansible.builtin.apt:
+    deb: https://github.com/home-assistant/supervised-installer/releases/latest/download/homeassistant-supervised.deb
