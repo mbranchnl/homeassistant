@@ -16,7 +16,7 @@
   when: "'unmanaged' in hass_nm_status.stdout"
 
 - name: Restart NetworkManager service
-  service:
+  ansible.builtin.service:
     name: NetworkManager
     state: restarted
   when: "'unmanaged' in hass_nm_status.stdout"
